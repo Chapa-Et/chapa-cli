@@ -1,5 +1,5 @@
 import click
-from getpass import getpass  # Import getpass to securely get the user's token
+from getpass import getpass  
 from chapa_cli import webhook, transaction
 from chapa_cli.utils import save_token, load_token
 
@@ -13,9 +13,15 @@ def login():
     """Login to Chapa CLI by providing your secret token."""
     token = getpass("Enter your Chapa secret token: ")
     if token:
+        #TODO: validate the token with the server before saving
+        
         #store the token
         save_token(token)
-        click.echo("Login successful!")
+        #check if the token is saved
+        if load_token():
+            click.echo("Login successful!")
+        else:
+            click.echo("Login failed. Please try again.")
     else:
         click.echo("Token cannot be empty. Please try again.")
 

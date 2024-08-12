@@ -12,6 +12,11 @@ def save_token(token):
     with open(CONFIG_FILE_PATH, "w") as config_file:
         json.dump(config_data, config_file)
 
+def validate_token(token):
+    """Validate the secret token with the server."""
+    return True
+
+
 def load_token():
     """Load the secret token from the environment variable or config file."""
     token = os.getenv("CHAPA_API_TOKEN")
