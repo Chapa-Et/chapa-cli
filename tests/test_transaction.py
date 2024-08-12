@@ -26,7 +26,7 @@ class TestTransactionCommands(unittest.TestCase):
                 }
             ]
         }
-        mock.get("https://api.chapa.com/v1/banks", json=banks_response, status_code=200)
+        mock.get("https://api.chapa.co/v1/banks", json=banks_response, status_code=200)
         
         result = self.runner.invoke(transaction.commands['banks'])
         print(f"Output: {result.output}") 
@@ -57,7 +57,7 @@ class TestTransactionCommands(unittest.TestCase):
                 "updated_at": "2023-02-02T07:05:23.000000Z"
             }
         }
-        mock.get("https://api.chapa.com/v1/transaction/verify/chewatatest-6669", json=verify_response, status_code=200)
+        mock.get("https://api.chapa.co/v1/transaction/verify/chewatatest-6669", json=verify_response, status_code=200)
         
         result = self.runner.invoke(transaction.commands['verify'], ["chewatatest-6669"])
         print(f"Output: {result.output}")  
@@ -72,10 +72,10 @@ class TestTransactionCommands(unittest.TestCase):
             "message": "Transaction initialized successfully",
             "status": "success",
             "data": {
-                "checkout_url": "https://checkout.chapa.com/3424234234DGSD$SDFSDF#"
+                "checkout_url": "https://checkout.chapa.co/3424234234DGSD$SDFSDF#"
             }
         }
-        mock.post("https://api.chapa.com/v1/transaction/initialize", json=init_response, status_code=200)
+        mock.post("https://api.chapa.co/v1/transaction/initialize", json=init_response, status_code=200)
         
         result = self.runner.invoke(transaction.commands['initialize'], [
             '--amount', '100', '--phone', '0911223344'
