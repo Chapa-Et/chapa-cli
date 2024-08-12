@@ -108,7 +108,7 @@ def transaction():
 
 @transaction.command()
 @click.option("--amount", required=True, help="The amount for the transaction.")
-@click.option("--email", required=True, help="The customer's email.")
+@click.option("--email", required=False, help="The customer's email.")
 @click.option("--phone", required=False, help="The customer's phone number.")
 @click.option("--currency", required=False, default="ETB", help="The currency for the transaction.")
 @click.option("--tx_ref", required=False, help="Transaction reference (auto-generated if not provided).")
