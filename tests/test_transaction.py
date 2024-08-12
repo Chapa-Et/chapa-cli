@@ -72,7 +72,7 @@ class TestTransactionCommands(unittest.TestCase):
             "message": "Transaction initialized successfully",
             "status": "success",
             "data": {
-                "checkout_url": "https://checkout.chapa.co/3424234234DGSD$SDFSDF#"
+                "checkout_url": "https://checkout.chapa.co/3424234234DGSD$SDFSDF"
             }
         }
         mock.post("https://api.chapa.co/v1/transaction/initialize", json=init_response, status_code=200)

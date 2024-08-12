@@ -114,7 +114,7 @@ def transaction():
 @click.option("--tx_ref", required=False, help="Transaction reference (auto-generated if not provided).")
 @click.option("--callback_url", required=False, help="URL to redirect to after payment.")
 @click.option("--webhook_url", required=False, help="URL to receive transaction events.")
-def initialize(amount, email, currency, tx_ref, callback_url, webhook_url):
+def initialize(amount, email, phone ,currency, tx_ref, callback_url, webhook_url):
     """Initialize a new transaction."""
     token = load_token()
     if not token:
@@ -125,6 +125,7 @@ def initialize(amount, email, currency, tx_ref, callback_url, webhook_url):
         "amount": amount,
         "currency": currency,
         "email": email,
+        "phone_number": phone,
         "tx_ref": tx_ref,
         "callback_url": callback_url ,
         "webhook": webhook_url
