@@ -13,12 +13,24 @@
 
 ## Installation
 
+You don't need this source code unless you want to modify the package. If you just want to use the package, just run:
+
+```bash
+pip install --upgrade chapa-cli
+```
+
+
+Install from source with:
+
 ### Prerequisites
 
-- Python 3.7 or later
+- Python 3.7 or later (PyPy supported)
 - pip (Python package installer)
 
 ### Steps
+
+
+### 
 
 1. **Clone the Repository:**
    ```bash
@@ -70,7 +82,7 @@ chapa transaction banks
 ### Get Transaction Events
 
 ```bash
-chapa transaction get_events AP9ARo9XvMO5
+chapa transaction events AP9ARo9XvMO5
 ```
 
 ### Webhook Management
