@@ -1,4 +1,3 @@
-# chapa_cli/utils.py
 import os
 import json
 import base64
@@ -14,10 +13,16 @@ def save_token(token):
         json.dump(config_data, config_file)
 
 def load_token():
-    """Load the secret token from the config file."""
+    """Load the secret token from the environment variable or config file."""
+    token = os.getenv("CHAPA_API_TOKEN")
+    
+    if token:
+        return token
+    
     if os.path.exists(CONFIG_FILE_PATH):
         with open(CONFIG_FILE_PATH, "r") as config_file:
             config_data = json.load(config_file)
             token = base64.b64decode(config_data.get("token")).decode("utf-8")
             return token
+    
     return None
