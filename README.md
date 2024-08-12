@@ -3,6 +3,11 @@
 
 **Chapa CLI** is a command-line tool that helps you integrate, manage, and interact with Chapa's payment API directly from your terminal. This tool provides various commands to handle transactions, retrieve bank details, and more, making it easier to work with Chapa's API without the need for manual API calls.
 
+## Chapa CLI in Action
+
+![Chapa CLI in Action](assets/chapa-cli.gif)
+
+
 ## Features
 
 - **Initialize Transactions:** Create new transactions directly from the CLI.

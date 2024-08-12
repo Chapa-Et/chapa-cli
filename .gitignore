@@ -40,4 +40,5 @@ htmlcov/
 .env
 *.local
 
-
+.DS_Store
+chapa-cli.mp4
