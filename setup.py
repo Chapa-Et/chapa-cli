@@ -22,6 +22,7 @@ setup(
         "click",           # For creating CLI commands
         "flask",           # For webhook listener (optional)
         "pyngrok",         # For ngrok integration (optional)
+        "rich"             # For beautiful terminal output 
         
     ],
     entry_points={
