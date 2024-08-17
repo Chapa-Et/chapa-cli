@@ -44,25 +44,8 @@ def print_banks_info(response):
     table.add_column("Created", justify="center", width=10)
     table.add_column("Updated", justify="center", width=10)
     
-    # for bank in banks:
-    #     print(f"Bank ID: {bank['id']}")
-    #     print(f"Name: {bank['name']}")
-    #     print(f"Slug: {bank['slug']}")
-    #     print(f"SWIFT Code: {bank['swift']}")
-    #     print(f"Account Number Length: {bank['acct_length']}")
-    #     print(f"Currency: {bank['currency']}")
-    #     print(f"Country ID: {bank['country_id']}")
-    #     print(f"Mobile Money: {'Yes' if bank['is_mobilemoney'] else 'No'}")
-    #     print(f"RTGS Enabled: {'Yes' if bank['is_rtgs'] else 'No'}")
-    #     print(f"24 Hours Service: {'Yes' if bank['is_24hrs'] else 'No'}")
-    #     print(f"Active: {'Yes' if bank['is_active'] else 'No'}")
-    #     print(f"Created At: {bank['created_at']}")
-    #     print(f"Updated At: {bank['updated_at']}")
-    #     print("\n" + "-" * 40 + "\n")
 
-
-
-        # Add rows to the table
+    # Add rows to the table
     for bank in banks:
         table.add_row(
             str(bank["id"]),
