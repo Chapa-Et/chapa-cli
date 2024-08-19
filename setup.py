@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="chapa-cli",
-    version="0.0.2",
+    version="0.0.3",
     author="Israel Goytom",
     author_email="israel@chapa.co",
     description="A CLI tool for integrating with Chapa API.",
