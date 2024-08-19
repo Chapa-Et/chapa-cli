@@ -6,6 +6,8 @@ on:
 
 permissions:
   contents: read
+  id-token: write 
+  packages: write
 
 jobs:
   deploy:
@@ -32,4 +34,3 @@ jobs:
         with:
           user: __token__
           password: ${{ secrets.PYPI_API_TOKEN }}
-
