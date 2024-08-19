@@ -29,7 +29,7 @@ def print_banks_info(response):
     banks = response['data']
     # print(f"\n{response['message']}\n")
 
-    table = Table(title="Bank Information")
+    table = Table(title="List of Supported Banks Information")
 
     # Add columns to the table with adjusted width
     table.add_column("Bank ID", justify="right", style="cyan", no_wrap=True, width=8)
@@ -78,6 +78,8 @@ def print_transaction_events(response):
     table.add_column("Event Item",justify="right",style="cyan",no_wrap=True, width=10)
     table.add_column("Message",style="magenta",justify="left",no_wrap=True,width=60)
     table.add_column("Type",style="green",no_wrap=True,width=5)
+    
+    # type color green if it is log and red if it is error
     table.add_column("Created At:",style="yellow",no_wrap=True,width=11)
     table.add_column("Updated At:",style="blue",no_wrap=True,width=11)
     
