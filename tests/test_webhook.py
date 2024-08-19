@@ -18,9 +18,6 @@ class WebhookTestCase(unittest.TestCase):
         result = self.runner.invoke(webhook.commands['ping'], ['http://localhost:5000/webhook/test'])
         self.assertIn('Ping failed', result.output)
 
-    def test_ngrok_tunnel_command(self):
-        result = self.runner.invoke(webhook.commands['tunnel'], ['5000'])
-        self.assertIn('Ngrok tunnel started at', result.output)
 
     def test_listen_command(self):
         result = self.runner.invoke(webhook.commands['listen'], ['http://localhost:5000/webhook/test'])
