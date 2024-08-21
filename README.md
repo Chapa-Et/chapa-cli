@@ -14,7 +14,7 @@
 - **Verify Transactions:** Check the status of a transaction.
 - **Get Banks:** Retrieve a list of supported banks.
 - **Get Transaction Events:** Fetch and display events related to a specific transaction.
-- **Webhook Management:** Listen to and test webhooks.
+- **Webhook Management:** Listen to and test webhooks, including signature verification using HMAC SHA256.
 
 ## Installation
 
@@ -103,6 +103,19 @@ chapa webhook listen /pay/chapa-webhook
 ```bash
 chapa webhook ping http://localhost:5000/pay/chapa-webhook
 ```
+
+### Verify a Webhook URL
+
+You can verify your webhook URL using Chapa's standard webhook protocol, which includes checking the URL's reachability, support for the POST method, SSL certificate validity, and validating the webhook signature with a provided secret key.
+
+```bash
+chapa webhook verifywebhook https://webhook.site/your-webhook-url --usekey your_secret_key
+```
+
+- **URL:** The webhook URL you want to verify.
+- **--usekey:** (Optional) Your secret key used to sign the request and validate the response. This is crucial for ensuring the integrity and authenticity of webhook requests.
+
+
 
 ## Configuration
 
