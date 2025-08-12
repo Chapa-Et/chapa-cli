@@ -1,6 +1,8 @@
 import click
 import requests
 from chapa_cli.utils import load_token
+from chapa_cli.validators import validate_email_input, validate_phone_input, validate_amount_input, AccountType
+from chapa_cli.error_handling import make_api_request, ChapaAPIError
 
 from rich.console import Console
 from rich.table import Table 
@@ -160,19 +162,50 @@ def transaction():
 @click.option("--tx_ref", required=False, help="Transaction reference (auto-generated if not provided).")
 @click.option("--callback_url", required=False, help="URL to redirect to after payment.")
 @click.option("--webhook_url", required=False, help="URL to receive transaction events.")
-def initialize(amount, email, phone ,currency, tx_ref, callback_url, webhook_url):
+@click.option("--account-type", type=click.Choice(['individual', 'business', 'ngo']), 
+              default='individual', help="Account type for transaction limits validation.")
+def initialize(amount, email, phone ,currency, tx_ref, callback_url, webhook_url, account_type):
     table = Table.grid()
     table.add_column(justify="left", style="bold")
     table.add_column(justify="left")
     
-    """Initialize a new transaction."""
+    """Initialize a new transaction with enhanced validation."""
     token = load_token()
     if not token:
-        click.echo("Please login first using the `chapa login` command.")
+        console.print("[red]Please login first using the `chapa login` command.[/red]")
         return
 
+    # Validate inputs using our professional validators
+    try:
+        # Map string account type to enum
+        account_type_map = {
+            'individual': AccountType.INDIVIDUAL_UNAPPROVED,
+            'business': AccountType.BUSINESS_UNAPPROVED,
+            'ngo': AccountType.NGO_UNAPPROVED
+        }
+        account_enum = account_type_map.get(account_type, AccountType.INDIVIDUAL_UNAPPROVED)
+        
+        # Validate amount with Chapa limits
+        amount_value = validate_amount_input(amount, currency, account_enum)
+        
+        # Validate email if provided
+        if email:
+            email = validate_email_input(email)
+        
+        # Validate phone if provided  
+        if phone:
+            phone = validate_phone_input(phone)
+            
+        # Validate currency
+        if currency and currency.upper() not in ['ETB', 'USD']:
+            raise ValueError("Currency must be 'ETB' or 'USD'")
+            
+    except Exception as e:
+        console.print(f"[red]Validation Error: {e}[/red]")
+        raise click.Abort()
+
     data = {
-        "amount": amount,
+        "amount": str(amount_value),
         "currency": currency,
         "email": email,
         "phone_number": phone,
@@ -182,10 +215,13 @@ def initialize(amount, email, phone ,currency, tx_ref, callback_url, webhook_url
     }
 
     headers = {"Authorization": f"Bearer {token}"}
-    response = requests.post(f"{API_URL}/transaction/initialize", json=data, headers=headers)
-
-    data = response.json()
-    if response.status_code == 200:
+    
+    try:
+        # Use enhanced API request with retry logic
+        response = make_api_request("POST", f"{API_URL}/transaction/initialize", 
+                                  json_data=data, headers=headers)
+        
+        data = response.json()
         for key,value in data.items():
             if key != "data":
                 table.add_row(f"{key.capitalize()}:", str(value))
@@ -193,12 +229,11 @@ def initialize(amount, email, phone ,currency, tx_ref, callback_url, webhook_url
         if 'data' in data and 'checkout_url' in data['data']:
             checkout_url = data['data']['checkout_url']
             table.add_row("Checkout URL:", checkout_url)
-        rprint(Panel(table, title="[bold green]Transaction initialized successfully[/bold green]"))
-        #click.echo(f"Transaction initialized successfully: {response.json()}")
-    else:
-        for key,value in response.json().items():
-            table.add_row(f"{key.capitalize()}: ", str(value))
-        rprint(Panel(table, title="[bold red]Failed to initialize transaction[/bold red]"))
+        console.print(Panel(table, title="[bold green]Transaction initialized successfully[/bold green]"))
+        
+    except ChapaAPIError as e:
+        table.add_row("Error:", str(e))
+        console.print(Panel(table, title="[bold red]Failed to initialize transaction[/bold red]"))
 
 @transaction.command()
 @click.argument("reference")
@@ -207,38 +242,47 @@ def verify(reference):
     table.add_column(justify="left", style="bold")
     table.add_column(justify="left")
 
-    """Verify a transaction by its reference."""
+    """Verify a transaction by its reference with enhanced error handling."""
     token = load_token()
     if not token:
-        click.echo("Please login first using the `chapa login` command.")
+        console.print("[red]Please login first using the `chapa login` command.[/red]")
+        return
+
+    # Validate reference input
+    if not reference or not reference.strip():
+        console.print("[red]Transaction reference cannot be empty.[/red]")
         return
 
     headers = {"Authorization": f"Bearer {token}"}
-    response = requests.get(f"{API_URL}/transaction/verify/{reference}", headers=headers)
-
-    if response.status_code == 200:
-        click.echo(f"Transaction verified: {response.json()}")
-    else:
-        for key,value in response.json().items():
-           table.add_row(f"{key.capitalize()}: ", str(value))
-        rprint(Panel(table, title="[bold red]Failed to verify transaction[/bold red]"))
-        # click.echo(f"Failed to verify transaction: {response.json()}"
+    
+    try:
+        # Use enhanced API request with retry logic
+        response = make_api_request("GET", f"{API_URL}/transaction/verify/{reference.strip()}", 
+                                  headers=headers)
+        
+        console.print(f"[green]Transaction verified: {response.json()}[/green]")
+        
+    except ChapaAPIError as e:
+        table.add_row("Error:", str(e))
+        console.print(Panel(table, title="[bold red]Failed to verify transaction[/bold red]"))
         
 @transaction.command()
 def banks():
-    """Get a list of supported banks."""
+    """Get a list of supported banks with enhanced error handling."""
     token = load_token()
     if not token:
-        click.echo("Please login first using the `chapa login` command.")
+        console.print("[red]Please login first using the `chapa login` command.[/red]")
         return
 
     headers = {"Authorization": f"Bearer {token}"}
-    response = requests.get(f"{API_URL}/banks", headers=headers)
-
-    if response.status_code == 200:
+    
+    try:
+        # Use enhanced API request with retry logic
+        response = make_api_request("GET", f"{API_URL}/banks", headers=headers)
         print_banks_info(response.json())
-    else:
-        click.echo(f"Failed to get supported banks: {response.json()}")
+        
+    except ChapaAPIError as e:
+        console.print(f"[red]Failed to get supported banks: {e}[/red]")
 
 
 @transaction.command()

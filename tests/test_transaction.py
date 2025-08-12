@@ -1,7 +1,6 @@
 import unittest
 from click.testing import CliRunner
-from unittest.mock import patch
-import requests_mock
+from unittest.mock import patch, MagicMock
 from chapa_cli.transaction import transaction
 
 class TestTransactionCommands(unittest.TestCase):
@@ -10,8 +9,8 @@ class TestTransactionCommands(unittest.TestCase):
         self.runner = CliRunner()
 
     @patch('chapa_cli.transaction.load_token', return_value="test_token")
-    @requests_mock.Mocker()
-    def test_banks_command(self, mock, load_token_mock):
+    @patch('chapa_cli.transaction.make_api_request')
+    def test_banks_command(self, mock_api_request, mock_load_token):
         """Test the banks command."""
         banks_response = {
             "message": "Banks retrieved",
@@ -22,20 +21,31 @@ class TestTransactionCommands(unittest.TestCase):
                     "swift": "TSTBKTAA",
                     "name": "Test Bank",
                     "acct_length": 16,
-                    "currency": "ETB"
+                    "currency": "ETB",
+                    "is_mobilemoney": False,
+                    "is_rtgs": True,
+                    "is_24hrs": True,
+                    "is_active": True,
+                    "created_at": "2023-01-01T00:00:00.000000Z",
+                    "updated_at": "2023-01-01T00:00:00.000000Z"
                 }
             ]
         }
-        mock.get("https://api.chapa.co/v1/banks", json=banks_response, status_code=200)
         
-        result = self.runner.invoke(transaction.commands['banks'])
+        # Mock the API response
+        mock_response = MagicMock()
+        mock_response.json.return_value = banks_response
+        mock_api_request.return_value = mock_response
+        
+        result = self.runner.invoke(transaction, ['banks'])
         print(f"Output: {result.output}") 
         print(f"Exception: {result.exception}")  
-        self.assertIn("Banks retrieved", result.output)
+        self.assertIn("List of Supported Banks Information", result.output)
+        self.assertIn("Test Bank", result.output)
 
     @patch('chapa_cli.transaction.load_token', return_value="test_token")
-    @requests_mock.Mocker()
-    def test_verify_command(self, mock, load_token_mock):
+    @patch('chapa_cli.transaction.make_api_request')
+    def test_verify_command(self, mock_api_request, mock_load_token):
         """Test the verify transaction command."""
         verify_response = {
             "message": "Payment details",
@@ -57,16 +67,20 @@ class TestTransactionCommands(unittest.TestCase):
                 "updated_at": "2023-02-02T07:05:23.000000Z"
             }
         }
-        mock.get("https://api.chapa.co/v1/transaction/verify/chewatatest-6669", json=verify_response, status_code=200)
         
-        result = self.runner.invoke(transaction.commands['verify'], ["chewatatest-6669"])
+        # Mock the API response
+        mock_response = MagicMock()
+        mock_response.json.return_value = verify_response
+        mock_api_request.return_value = mock_response
+        
+        result = self.runner.invoke(transaction, ['verify', "chewatatest-6669"])
         print(f"Output: {result.output}")  
         print(f"Exception: {result.exception}") 
         self.assertIn("Payment details", result.output)
 
     @patch('chapa_cli.transaction.load_token', return_value="test_token")
-    @requests_mock.Mocker()
-    def test_initialize_command(self, mock, load_token_mock):
+    @patch('chapa_cli.transaction.make_api_request')
+    def test_initialize_command(self, mock_api_request, mock_load_token):
         """Test the initialize transaction command."""
         init_response = {
             "message": "Transaction initialized successfully",
@@ -75,10 +89,14 @@ class TestTransactionCommands(unittest.TestCase):
                 "checkout_url": "https://checkout.chapa.co/3424234234DGSD$SDFSDF"
             }
         }
-        mock.post("https://api.chapa.co/v1/transaction/initialize", json=init_response, status_code=200)
         
-        result = self.runner.invoke(transaction.commands['initialize'], [
-            '--amount', '100', '--phone', '0911223344'
+        # Mock the API response
+        mock_response = MagicMock()
+        mock_response.json.return_value = init_response
+        mock_api_request.return_value = mock_response
+        
+        result = self.runner.invoke(transaction, [
+            'initialize', '--amount', '100', '--phone', '0911223344'
         ])
         print(f"Output: {result.output}")  
         print(f"Exception: {result.exception}") 
