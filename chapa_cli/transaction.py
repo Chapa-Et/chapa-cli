@@ -1,5 +1,4 @@
 import click
-import sys 
 import requests
 from chapa_cli.utils import load_token
 
@@ -293,14 +292,14 @@ def getall(page):
         click.echo(f"Failed to get transactions: {response.json()}")
 
 
-@transaction.command()
+@transaction.command(name="verify-detailed")
 @click.argument('tx_ref')
-def verify(tx_ref):
+def verify_detailed(tx_ref):
     table = Table.grid()
     table.add_column(justify="left", style="bold")
     table.add_column(justify="left")
     
-    """Verify a transaction by its reference."""
+    """Verify a transaction by its reference with detailed payment information."""
     token = load_token()
     if not token:
         click.echo("Please login first using the `chapa login` command.")

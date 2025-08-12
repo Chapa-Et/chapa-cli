@@ -23,8 +23,14 @@ setup(
         "flask",           # For webhook listener (optional)
         "pyngrok",         # For ngrok integration (optional)
         "rich"             # For beautiful terminal output 
-        
     ],
+    extras_require={
+        "dev": [
+            "requests-mock",   # For mocking HTTP requests in tests
+            "pytest",          # Testing framework
+            "pytest-cov",      # Coverage reporting
+        ]
+    },
     entry_points={
         "console_scripts": [
             "chapa=chapa_cli.main:cli",
