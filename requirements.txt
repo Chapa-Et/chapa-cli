@@ -3,3 +3,6 @@ pyngrok
 click
 flask
 rich
+requests-mock
+pytest
+pytest-cov
