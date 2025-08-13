@@ -91,6 +91,7 @@ def make_api_request(
         
         # Check for HTTP errors
         if not response.ok:
+            logger.error(f"API request failed with status code {response.status_code} and response content: {response.text}")
             handle_api_error(response)
         
         return response
