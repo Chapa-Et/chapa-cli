@@ -121,7 +121,7 @@ chapa webhook verifywebhook https://webhook.site/your-webhook-url --usekey your_
 
 ### Storing the Token
 
-Your Chapa secret token is stored in a configuration file located at `~/.chapa-cli_config.json`. This file is created when you log in using the `chapa login` command.
+Your Chapa secret token is stored in a configuration file located at `~/.chapa_cli_config.json`. This file is created when you log in using the `chapa login` command.
 
 ### Environment Variables
 

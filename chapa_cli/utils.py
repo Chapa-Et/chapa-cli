@@ -1,6 +1,10 @@
 import os
 import json
 import base64
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 CONFIG_FILE_PATH = os.path.expanduser("~/.chapa_cli_config.json")
 
@@ -18,12 +22,18 @@ def validate_token(token):
 
 
 def load_token():
-    """Load the secret token from the environment variable or config file."""
-    token = os.getenv("CHAPA_API_TOKEN")
-    
+    """Load the secret token from environment variables or config file."""
+    # First check .env file for secret key
+    token = os.getenv("CHAPA_SECRET_KEY")
     if token:
         return token
     
+    # Then check API token environment variable    
+    token = os.getenv("CHAPA_API_TOKEN")
+    if token:
+        return token
+    
+    # Finally check config file
     if os.path.exists(CONFIG_FILE_PATH):
         with open(CONFIG_FILE_PATH, "r") as config_file:
             config_data = json.load(config_file)
